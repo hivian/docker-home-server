@@ -1,0 +1,35 @@
+version: '3'
+services:
+   # homeassistant:
+   #     image: ghcr.io/home-assistant/home-assistant:stable
+   #     container_name: homeassistant
+   #     ports:
+   #       - 8123:8123
+   #     environment:
+   #         - PUID=1000
+   #         - PGID=1000
+   #         - TZ=Europe/Paris
+   #     volumes:
+   #         - ./data:/config
+   #     restart: unless-stopped
+
+    #eufy-ws:
+    #    image: bropat/eufy-security-ws:latest
+    #    container_name: eufy-ws
+    #    ports:
+     #     - 3000:3000
+     #   environment:
+     #     - USERNAME=hivian
+     #     - PASSWORD=admin
+     #     - COUNTRY=FR
+     #   restart: unless-stopped
+
+    rtsp_server:
+        image: bluenviron/mediamtx:latest
+        container_name: rtsp_server
+        ports:
+          - 8554:8554
+          - 1935:1935
+        environment:
+          - RTSP_PROTOCOLS=tcp
+        restart: unless-stopped

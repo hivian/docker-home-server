@@ -1,0 +1,8 @@
+# Ignore everything in subdirectories
+*/*
+
+# But not these files 
+!*/docker-compose.yml
+
+
+
