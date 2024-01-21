@@ -1,0 +1,8 @@
+version: '3.1'
+services:
+  owncloud:
+    image: owncloud:latest
+    ports:
+      - 8081:80
+    volumes:
+      - "./data:/var/www/html/data"
