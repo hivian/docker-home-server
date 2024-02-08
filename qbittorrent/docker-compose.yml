@@ -1,19 +1,42 @@
 version: "3"
 services:
-  syncthing:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8082:8082 #qbit
+      - 6881:6881 #qbit
+      - 6881:6881/udp #qbit
+    volumes:
+      - ./gluetun:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=wireguard
+      - VPN_ENDPOINT_IP=146.70.194.34
+      - VPN_ENDPOINT_PORT=51820
+      - DNS_ADDRESS=1.1.1.1
+      - WIREGUARD_PUBLIC_KEY=mbgw7Sxzok7Px1T/cTLDvWEdbU8bWWS00aOhAJy2omQ=
+      - WIREGUARD_PRIVATE_KEY=mHBVbCiOsf5RL5DQ6SUMCwnIo2s+YrmVstWB5E5wQEA=
+      - WIREGUARD_ADDRESSES=10.2.0.2/32
+    restart: unless-stopped
+
+  qbittorent:
     image: linuxserver/qbittorrent
     container_name: qbittorrent
+    network_mode: "service:gluetun"
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Paris
       - WEBUI_PORT=8082
-      - UMASK=022
     volumes:
       - ./downloads:/downloads
       - ./appdata/config:/config
-    ports:
-      - 6881:6881
-      - 6881:6881/udp
-      - 8082:8082
+    depends_on:
+      - gluetun
     restart: unless-stopped
+
