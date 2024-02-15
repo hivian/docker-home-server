@@ -1,18 +1,10 @@
 version: "3"
 
-volumes:
-  files:
-    driver: local
-  mysql:
-    driver: local
-  redis:
-    driver: local
-
 services:
   owncloud:
     image: owncloud/server
     container_name: owncloud_server
-    restart: always
+    restart: unless-stopped
     ports:
       - ${HTTP_PORT}:8080
     depends_on:
@@ -42,7 +34,7 @@ services:
   mariadb:
     image: mariadb:10.6.16
     container_name: owncloud_mariadb
-    restart: always
+    restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=owncloud
       - MYSQL_USER={DB_USERNAME}
@@ -61,7 +53,7 @@ services:
   redis:
     image: redis:6.2
     container_name: owncloud_redis
-    restart: always
+    restart: unless-stopped
     command: ["--databases", "1"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]

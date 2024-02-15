@@ -1,9 +1,10 @@
 #!/bin/bash
 docker compose -f ./plex/docker-compose.yml up -d --force-recreate
 docker compose -f ./pihole/docker-compose.yml up -d --force-recreate
-docker compose -f ./nginx/docker-compose.yml up -d --force-recreate
 docker compose -f ./owncloud/docker-compose.yml up -d --force-recreate
 docker compose -f ./qbittorrent/docker-compose.yml up -d --force-recreate
+docker compose -f ./portainer/docker-compose.yml up -d --force-recreate
+docker compose -f ./nginx-proxy/docker-compose.yml up -d --force-recreate
 
 # Test qbittorrent public ip
 # curl ifconfig.IO

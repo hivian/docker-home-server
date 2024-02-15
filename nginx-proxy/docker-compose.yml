@@ -13,10 +13,4 @@ services:
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
-    networks:
-      - reverse-proxy
     restart: unless-stopped
-
-networks:
-   reverse-proxy:
-    name: reverse-proxy
