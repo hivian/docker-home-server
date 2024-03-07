@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    network_mode: "container:gluetun"
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./sonarr/config:/config
+      - ./sonarr/tvseries:/tv
+      - ./sonarr/downloads:/downloads
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    network_mode: "container:gluetun"
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./radarr/config:/config
+      - ./radarr/movies:/movies
+      - ./radarr/downloads:/downloads
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    network_mode: "container:gluetun"
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./prowlarr/config:/config
+    restart: unless-stopped

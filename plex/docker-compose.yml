@@ -3,7 +3,7 @@ services:
   plex:
     container_name: plex
     network_mode: host
-    image: linuxserver/plex
+    image: linuxserver/plex:latest
     restart: unless-stopped
     environment:
       - PUID=1000
