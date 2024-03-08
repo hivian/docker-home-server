@@ -1,41 +1,115 @@
 version: '3.8'
 services:
-  sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
-    network_mode: "container:gluetun"
-    container_name: sonarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 9696:9696 # prowlarr
+      - 8989:8989 # sonarr
+      - 7878:7878 # radarr
+      - 8082:8082 #qbit
+      - 6881:6881 #qbit
+      - 6881:6881/udp #qbit
     volumes:
-      - ./sonarr/config:/config
-      - ./sonarr/tvseries:/tv
-      - ./sonarr/downloads:/downloads
+      - ${VOLUME_PATH}/config/gluetun:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - VPN_TYPE=${VPN_TYPE}
+      - VPN_ENDPOINT_IP=${VPN_ENDPOINT_IP}
+      - VPN_ENDPOINT_PORT=${VPN_ENDPOINT_PORT}
+      - DNS_ADDRESS=${DNS_ADDRESS}
+      - WIREGUARD_PUBLIC_KEY=${WIREGUARD_PUBLIC_KEY}
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
     restart: unless-stopped
 
-  radarr:
-    image: lscr.io/linuxserver/radarr:latest
-    network_mode: "container:gluetun"
-    container_name: radarr
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: service:gluetun
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8082
+      - UMASK=022
     volumes:
-      - ./radarr/config:/config
-      - ./radarr/movies:/movies
-      - ./radarr/downloads:/downloads
+      - ${VOLUME_PATH}/config/qbittorrent:/config
+      - ${VOLUME_PATH}/downloads:/downloads
+    depends_on:
+      - gluetun
+    labels:
+      - autoheal=true
+    healthcheck:
+      test: curl google.com || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
-    network_mode: "container:gluetun"
+    network_mode: service:gluetun
     container_name: prowlarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - ./prowlarr/config:/config
+      - ${VOLUME_PATH}/config/prowlarr:/config
+    depends_on:
+      - gluetun
+      - qbittorrent
     restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    network_mode: service:gluetun
+    container_name: sonarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${VOLUME_PATH}/config/sonarr:/config
+      - ${VOLUME_PATH}/complete/tv:/tv
+      - ${VOLUME_PATH}/downloads:/downloads
+    depends_on:
+      - prowlarr
+      - qbittorrent
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    network_mode: service:gluetun
+    container_name: radarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${VOLUME_PATH}/config/radarr:/config
+      - ${VOLUME_PATH}/complete/movies:/movies
+      - ${VOLUME_PATH}/downloads:/downloads
+    depends_on:
+      - prowlarr
+      - qbittorrent
+    restart: unless-stopped
+
+  plex:
+    container_name: plex
+    network_mode: host
+    image: linuxserver/plex:latest
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - version=docker
+    volumes:
+      - ${VOLUME_PATH}/config/plex:/config
+      - ${VOLUME_PATH}/complete/tv:/tv
+      - ${VOLUME_PATH}/complete/movies:/movies
