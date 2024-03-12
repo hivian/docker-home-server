@@ -29,7 +29,7 @@ services:
       timeout: 10s
       retries: 5
     volumes:
-      - ./data:/mnt/data
+      - ${VOLUME_PATH}/data:/mnt/data
 
   mariadb:
     image: mariadb:10.6.16
@@ -48,7 +48,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ${VOLUME_PATH}/mysql:/var/lib/mysql
 
   redis:
     image: redis:6.2
@@ -61,4 +61,4 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./redis:/data
+      - ${VOLUME_PATH}/redis:/data
