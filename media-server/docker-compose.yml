@@ -100,16 +100,34 @@ services:
       - qbittorrent
     restart: unless-stopped
 
-  plex:
-    container_name: plex
-    network_mode: host
-    image: linuxserver/plex:latest
+  jellyseerr:
+    container_name: jellyseerr
+    image: fallenbagel/jellyseerr:latest
+    ports:
+      - 5055:5055
+    volumes:
+      - ${VOLUME_PATH}/config/jellyseerr:/app/config
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    depends_on:
+      - sonarr
+      - radarr
+      - jellyfin
+    restart: unless-stopped
+
+  jellyfin:
+    image: linuxserver/jellyfin:latest
+    container_name: jellyfin
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - version=docker
     volumes:
-      - ${VOLUME_PATH}/config/plex:/config
-      - ${VOLUME_PATH}/complete/tv:/tv
-      - ${VOLUME_PATH}/complete/movies:/movies
+      - ${VOLUME_PATH}/config/jellyfin:/config
+      - ${VOLUME_PATH}/complete/tv:/data/tvshows
+      - ${VOLUME_PATH}/complete/movies:/data/movies
+    ports:
+      - 8096:8096
+    restart: unless-stopped
