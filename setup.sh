@@ -3,13 +3,12 @@
 if [ -f .env ]
 then
   export $(cat .env | sed 's/#.*//g' | xargs)
-  env
 fi
 
 for service in */
 do
     cd $service
-    docker compose up -d --force-recreate
+    docker compose up -d #--force-recreate
     cd ..
 done
 

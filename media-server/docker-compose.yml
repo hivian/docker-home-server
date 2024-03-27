@@ -9,11 +9,12 @@ services:
       - /dev/net/tun:/dev/net/tun
     ports:
       - 9696:9696 # prowlarr
+      - 6767:6767 # bazarr
       - 8989:8989 # sonarr
       - 7878:7878 # radarr
-      - 8082:8082 #qbit
-      - 6881:6881 #qbit
-      - 6881:6881/udp #qbit
+      - 8082:8082 # qbit
+      - 6881:6881 # qbit
+      - 6881:6881/udp # qbit
     volumes:
       - ${VOLUME_PATH}/config/gluetun:/gluetun
     environment:
@@ -64,6 +65,24 @@ services:
     depends_on:
       - gluetun
       - qbittorrent
+    restart: unless-stopped
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    network_mode: service:gluetun
+    container_name: bazarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${VOLUME_PATH}/config/bazarr:/config
+      - ${VOLUME_PATH}/complete/tv:/tv
+      - ${VOLUME_PATH}/complete/movies:/movies
+    depends_on:
+      - prowlarr
+      - qbittorrent
+
     restart: unless-stopped
 
   sonarr:
