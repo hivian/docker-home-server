@@ -63,26 +63,7 @@ services:
     volumes:
       - ${VOLUME_PATH}/config/prowlarr:/config
     depends_on:
-      - gluetun
       - qbittorrent
-    restart: unless-stopped
-
-  bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
-    network_mode: service:gluetun
-    container_name: bazarr
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${VOLUME_PATH}/config/bazarr:/config
-      - ${VOLUME_PATH}/complete/tv:/tv
-      - ${VOLUME_PATH}/complete/movies:/movies
-    depends_on:
-      - prowlarr
-      - qbittorrent
-
     restart: unless-stopped
 
   sonarr:
@@ -99,7 +80,6 @@ services:
       - ${VOLUME_PATH}/downloads:/downloads
     depends_on:
       - prowlarr
-      - qbittorrent
     restart: unless-stopped
 
   radarr:
@@ -116,24 +96,23 @@ services:
       - ${VOLUME_PATH}/downloads:/downloads
     depends_on:
       - prowlarr
-      - qbittorrent
     restart: unless-stopped
 
-  jellyseerr:
-    container_name: jellyseerr
-    image: fallenbagel/jellyseerr:latest
-    ports:
-      - 5055:5055
-    volumes:
-      - ${VOLUME_PATH}/config/jellyseerr:/app/config
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    network_mode: service:gluetun
+    container_name: bazarr
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${VOLUME_PATH}/config/bazarr:/config
+      - ${VOLUME_PATH}/complete/tv:/tv
+      - ${VOLUME_PATH}/complete/movies:/movies
     depends_on:
       - sonarr
       - radarr
-      - jellyfin
     restart: unless-stopped
 
   jellyfin:
@@ -149,4 +128,21 @@ services:
       - ${VOLUME_PATH}/complete/movies:/data/movies
     ports:
       - 8096:8096
+    restart: unless-stopped
+
+  jellyseerr:
+    container_name: jellyseerr
+    image: fallenbagel/jellyseerr:latest
+    ports:
+      - 5055:5055
+    volumes:
+      - ${VOLUME_PATH}/config/jellyseerr:/app/config
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    depends_on:
+      - radarr
+      - sonarr
+      - jellyfin
     restart: unless-stopped
