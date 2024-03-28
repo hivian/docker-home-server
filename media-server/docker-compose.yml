@@ -129,6 +129,17 @@ services:
     ports:
       - 8096:8096
     restart: unless-stopped
+    labels:
+      - homepage.group=Media server
+      - homepage.name=Jellyfin
+      - homepage.icon=jellyfin
+      - homepage.href=http://${JELLYFIN_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=Watch movies and TV shows.
+      - homepage.widget.type=jellyfin
+      - homepage.widget.url=http://${JELLYFIN_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.key=${JELLYFIN_API_KEY}
+      - homepage.widget.enableBlocks=true
+      - homepage.widget.enableNowPlaying=true
 
   jellyseerr:
     container_name: jellyseerr
