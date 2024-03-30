@@ -41,8 +41,6 @@ services:
     volumes:
       - ${VOLUME_PATH}/config/qbittorrent:/config
       - ${VOLUME_PATH}/downloads:/downloads
-    depends_on:
-      - gluetun
     labels:
       - autoheal=true
     healthcheck:
@@ -62,8 +60,6 @@ services:
       - TZ=${TZ}
     volumes:
       - ${VOLUME_PATH}/config/prowlarr:/config
-    depends_on:
-      - qbittorrent
     restart: unless-stopped
 
   sonarr:
