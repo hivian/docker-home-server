@@ -14,3 +14,14 @@ services:
       - ${VOLUME_PATH}/data:/data
       - ${VOLUME_PATH}/letsencrypt:/etc/letsencrypt
     restart: unless-stopped
+    labels:
+      - homepage.group=Infrastructure
+      - homepage.name=Nginx Proxy Manager
+      - homepage.icon=nginx-proxy-manager
+      - homepage.href=http://${SERVER_DOMAIN}:81
+      - homepage.description=Reverse proxy
+      - homepage.widget.type=npm
+      - homepage.widget.url=http://${SERVER_DOMAIN}:81
+      - homepage.widget.username=${USERNAME}
+      - homepage.widget.password=${PASSWORD}
+      - homepage.widget.fields=["enabled", "disabled", "total"]

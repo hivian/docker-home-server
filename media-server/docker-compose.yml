@@ -130,7 +130,7 @@ services:
       - 8096:8096
     restart: unless-stopped
     labels:
-      - homepage.group=Media server
+      - homepage.group=Media
       - homepage.name=Jellyfin
       - homepage.icon=jellyfin
       - homepage.href=http://${JELLYFIN_SUB_DOMAIN}.${SERVER_DOMAIN}
@@ -158,7 +158,7 @@ services:
       - jellyfin
     restart: unless-stopped
     labels:
-      - homepage.group=Media server
+      - homepage.group=Media
       - homepage.name=Jellyseerr
       - homepage.icon=jellyseerr
       - homepage.href=http://${JELLYSEERR_SUB_DOMAIN}.${SERVER_DOMAIN}

@@ -9,3 +9,14 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${VOLUME_PATH}/data:/data
     restart: unless-stopped
+    labels:
+      - homepage.group=Infrastructure
+      - homepage.name=Portainer
+      - homepage.icon=portainer
+      - homepage.href=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=Container management
+      - homepage.widget.type=portainer
+      - homepage.widget.url=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.env=${ENV}
+      - homepage.widget.key=${API_KEY}
+      - homepage.widget.fields=["running", "stopped", "total"]

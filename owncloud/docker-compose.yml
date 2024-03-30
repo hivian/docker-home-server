@@ -30,6 +30,12 @@ services:
       retries: 5
     volumes:
       - ${VOLUME_PATH}/data:/mnt/data
+    labels:
+      - homepage.group=Media
+      - homepage.name=Owncloud
+      - homepage.icon=owncloud
+      - homepage.href=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=File backup and synchronization
 
   mariadb:
     image: mariadb:10.6.16

@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  speedtest-tracker:
+      image: lscr.io/linuxserver/speedtest-tracker:latest
+      container_name: speedtest-tracker
+      environment:
+        - PUID=${PUID}
+        - PGID=${PGID}
+        - TZ=${TZ}
+        - DB_CONNECTION=sqlite
+      volumes:
+        - ${VOLUME_PATH}/config/speedtest-tracker:/config
+      ports:
+        - 8765:80
+      restart: unless-stopped
+      labels:
+        - homepage.group=Infrastructure
+        - homepage.name=Speedtest tracker
+        - homepage.icon=speedtest-tracker
+        - homepage.href=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
+        - homepage.description=Internet performance tracking
+        - homepage.widget.type=speedtest
+        - homepage.widget.url=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
+        - homepage.widget.fields=["download", "upload", "ping"]
