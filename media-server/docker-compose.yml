@@ -17,6 +17,8 @@ services:
       - 6881:6881/udp # qbit
     volumes:
       - ${VOLUME_PATH}/config/gluetun:/gluetun
+    networks:
+      - traefik-network
     environment:
       - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
       - VPN_TYPE=${VPN_TYPE}
@@ -27,6 +29,35 @@ services:
       - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
       - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+
+      - traefik.http.routers.qbittorrent.rule=Host(`${QBITTORRENT_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.qbittorrent.entrypoints=web
+      - traefik.http.routers.qbittorrent.service=qbittorrent
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=8082
+
+      - traefik.http.routers.prowlarr.rule=Host(`${PROWLARR_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.prowlarr.entrypoints=web
+      - traefik.http.routers.prowlarr.service=prowlarr
+      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
+
+      - traefik.http.routers.sonarr.rule=Host(`${SONARR_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.sonarr.entrypoints=web
+      - traefik.http.routers.sonarr.service=sonarr
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+
+      - traefik.http.routers.radarr.rule=Host(`${RADARR_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.radarr.entrypoints=web
+      - traefik.http.routers.radarr.service=radarr
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
+
+      - traefik.http.routers.bazarr.rule=Host(`${BAZARR_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.bazarr.entrypoints=web
+      - traefik.http.routers.bazarr.service=bazarr
+      - traefik.http.services.bazarr.loadbalancer.server.port=6767
+    security_opt:
+      - no-new-privileges:true
 
   qbittorrent:
     image: linuxserver/qbittorrent:latest
@@ -49,6 +80,8 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -61,6 +94,8 @@ services:
     volumes:
       - ${VOLUME_PATH}/config/prowlarr:/config
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -77,6 +112,8 @@ services:
     depends_on:
       - prowlarr
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -93,6 +130,8 @@ services:
     depends_on:
       - prowlarr
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -110,6 +149,8 @@ services:
       - sonarr
       - radarr
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
 
   jellyfin:
     image: linuxserver/jellyfin:latest
@@ -124,8 +165,14 @@ services:
       - ${VOLUME_PATH}/complete/movies:/data/movies
     ports:
       - 8096:8096
+    networks:
+      - traefik-network
     restart: unless-stopped
     labels:
+      - traefik.enable=true
+      - traefik.http.routers.jellyfin.rule=Host(`${JELLYFIN_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.jellyfin.entrypoints=web
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
       - homepage.group=Media
       - homepage.name=Jellyfin
       - homepage.icon=jellyfin
@@ -136,6 +183,8 @@ services:
       - homepage.widget.key=${JELLYFIN_API_KEY}
       - homepage.widget.enableBlocks=true
       - homepage.widget.enableNowPlaying=true
+    security_opt:
+      - no-new-privileges:true
 
   jellyseerr:
     container_name: jellyseerr
@@ -148,12 +197,18 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
+    networks:
+      - traefik-network
     depends_on:
       - radarr
       - sonarr
       - jellyfin
     restart: unless-stopped
     labels:
+      - traefik.enable=true
+      - traefik.http.routers.jellyseerr.rule=Host(`${JELLYSEERR_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.jellyseerr.entrypoints=web
+      - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
       - homepage.group=Media
       - homepage.name=Jellyseerr
       - homepage.icon=jellyseerr
@@ -163,3 +218,9 @@ services:
       - homepage.widget.url=http://${JELLYSEERR_SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.widget.key=${JELLYSEERR_API_KEY}
       - homepage.widget.fields=["pending", "approved", "available"]
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik-network:
+    external: true

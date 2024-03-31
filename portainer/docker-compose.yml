@@ -9,7 +9,13 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${VOLUME_PATH}/data:/data
     restart: unless-stopped
+    networks:
+      - traefik-network
     labels:
+      - traefik.enable=true
+      - traefik.http.routers.portainer.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.portainer.entrypoints=web
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
       - homepage.group=Infrastructure
       - homepage.name=Portainer
       - homepage.icon=portainer
@@ -20,3 +26,9 @@ services:
       - homepage.widget.env=${ENV}
       - homepage.widget.key=${API_KEY}
       - homepage.widget.fields=["running", "stopped", "total"]
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik-network:
+    external: true

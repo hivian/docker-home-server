@@ -10,7 +10,16 @@ services:
       - 3000:3000
     volumes:
       - ${VOLUME_PATH}/config/homepage:/app/config
+    networks:
+      - traefik-network
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homepage.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.homepage.entrypoints=web
+      - traefik.http.services.homepage.loadbalancer.server.port=3000
 
   dockerproxy:
     image: ghcr.io/tecnativa/docker-socket-proxy:latest
@@ -23,4 +32,12 @@ services:
       - CONTAINERS=1
       - POST=0
       - IMAGES=1
+    networks:
+      - traefik-network
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik-network:
+    external: true

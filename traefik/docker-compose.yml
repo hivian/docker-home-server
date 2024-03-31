@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    command: 
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${VOLUME_PATH}/letsencrypt:/etc/letsencrypt
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.entrypoints=web
+      - traefik.http.routers.dashboard.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.dashboard.service=api@internal
+      - homepage.group=Infrastructure
+      - homepage.name=Traefik
+      - homepage.icon=traefik
+      - homepage.href=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=Reverse proxy
+      - homepage.widget.type=traefik
+      - homepage.widget.url=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.fields=["routers", "services", "middleware"]
+    security_opt:
+      - no-new-privileges:true
+
+  whoami:
+    image: traefik/whoami:latest
+    container_name: whoami
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.rule=Host(`${WHOAMI_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.whoami.entrypoints=web
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik:
+    name: traefik-network

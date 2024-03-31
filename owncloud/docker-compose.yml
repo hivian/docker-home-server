@@ -1,5 +1,4 @@
-version: "3"
-
+version: "3.8"
 services:
   owncloud:
     image: owncloud/server:latest
@@ -30,12 +29,20 @@ services:
       retries: 5
     volumes:
       - ${VOLUME_PATH}/data:/mnt/data
+    networks:
+      - traefik-network
     labels:
+      - traefik.enable=true
+      - traefik.http.routers.owncloud.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.owncloud.entrypoints=web
+      - traefik.http.services.owncloud.loadbalancer.server.port=8080
       - homepage.group=Media
       - homepage.name=Owncloud
       - homepage.icon=owncloud
       - homepage.href=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.description=File backup and synchronization
+    security_opt:
+      - no-new-privileges:true
 
   mariadb:
     image: mariadb:10.6.16
@@ -48,6 +55,8 @@ services:
       - MYSQL_DATABASE=owncloud
       - MARIADB_AUTO_UPGRADE=1
     command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
+    networks:
+      - traefik-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
       interval: 10s
@@ -55,12 +64,16 @@ services:
       retries: 5
     volumes:
       - ${VOLUME_PATH}/mysql:/var/lib/mysql
+    security_opt:
+      - no-new-privileges:true
 
   redis:
     image: redis:6.2
     container_name: owncloud_redis
     restart: unless-stopped
     command: ["--databases", "1"]
+    networks:
+      - traefik-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -68,3 +81,9 @@ services:
       retries: 5
     volumes:
       - ${VOLUME_PATH}/redis:/data
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik-network:
+    external: true
