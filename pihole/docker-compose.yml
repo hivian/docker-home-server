@@ -37,8 +37,6 @@ services:
       - homepage.widget.url=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.widget.key=${API_KEY}
       - homepage.widget.fields=["queries", "blocked", "blocked_percent", "gravity"]
-    security_opt:
-      - no-new-privileges:true
 
 networks:
   traefik-network:
