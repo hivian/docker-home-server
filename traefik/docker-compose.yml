@@ -40,7 +40,7 @@ services:
       - traefik
     labels:
       - traefik.enable=true
-      - traefik.http.routers.whoami.rule=Host(`${WHOAMI_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.whoami.rule=Host(`${SERVER_DOMAIN}`, `${SERVER_IP}`)
       - traefik.http.routers.whoami.entrypoints=web
     security_opt:
       - no-new-privileges:true
