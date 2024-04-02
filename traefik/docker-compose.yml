@@ -1,9 +1,8 @@
-version: "3.8"
 services:
   traefik:
     image: traefik:latest
     container_name: traefik
-    command: 
+    command:
       - "--api.insecure=true"
       - "--api.dashboard=true"
       - "--providers.docker=true"
@@ -17,6 +16,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${VOLUME_PATH}/letsencrypt:/etc/letsencrypt
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.traefik.entrypoints=web
@@ -38,6 +38,7 @@ services:
     container_name: whoami
     networks:
       - traefik
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.whoami.rule=Host(`${SERVER_DOMAIN}`, `${SERVER_IP}`)
