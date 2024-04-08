@@ -17,7 +17,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.routers.speedtest-tracker.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
-        - traefik.http.routers.speedtest-tracker.entrypoints=web
+        - traefik.http.routers.speedtest-tracker.entrypoints=websecure
         - traefik.http.services.speedtest-tracker.loadbalancer.server.port=80
         - homepage.group=Infrastructure
         - homepage.name=Speedtest tracker
