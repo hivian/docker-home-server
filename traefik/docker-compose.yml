@@ -65,4 +65,8 @@ services:
 
 networks:
   traefik:
+    driver: bridge
     name: traefik-network
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16
