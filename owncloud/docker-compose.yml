@@ -33,7 +33,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.owncloud.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
-      - traefik.http.routers.owncloud.entrypoints=websecure
+      - traefik.http.routers.owncloud.entrypoints=web
       - traefik.http.services.owncloud.loadbalancer.server.port=8080
       - homepage.group=Media
       - homepage.name=Owncloud
