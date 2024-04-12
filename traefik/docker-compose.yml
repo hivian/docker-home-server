@@ -10,19 +10,26 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
-      #- "--entrypoints.web.http.redirections.entryPoint.to=web"
-      #- "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      #- "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      #- "--entrypoints.websecure.address=:443"
-      #- "--entrypoints.websecure.http.tls.certResolver=myresolver"
-      #- "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      #- "--certificatesResolvers.myresolver.acme.email=toto@toto.fr"
-      #- "--certificatesResolvers.myresolver.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
-      #- "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls.certResolver=myresolver"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
+      - "--certificatesResolvers.myresolver.acme.email=${ACME_EMAIL}"
+      - "--certificatesResolvers.myresolver.acme.dnschallenge.provider=${DNS_CHALLENGE_PROVIDER}"
+      - "--certificatesResolvers.myresolver.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53"
+      #- "--certificatesResolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesResolvers.myresolver.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.delayBeforeCheck=0"
     ports:
       - "80:80"
-      #- "443:443"
+      - "443:443"
       - "8080:8080"
+    environment:
+      CF_API_KEY: ${CF_GLOBAL_API_KEY}
+      CF_API_EMAIL: ${CF_API_EMAIL}
     networks:
       - traefik
     volumes:
@@ -31,11 +38,11 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.traefik.entrypoints=web
-      #- traefik.http.routers.traefik.tls=true
-      #- traefik.http.routers.traefik.tls.domains[0].main=${SERVER_DOMAIN}
-      #- traefik.http.routers.traefik.tls.domains[0].sans="*.${SERVER_DOMAIN}"
-      #- traefik.http.routers.traefik.tls.certresolver=myresolver
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.tls.domains[0].main=${SERVER_DOMAIN}
+      - traefik.http.routers.traefik.tls.domains[0].sans="*.${SERVER_DOMAIN}"
+      - traefik.http.routers.traefik.tls.certresolver=myresolver
       - traefik.http.routers.dashboard.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
       - traefik.http.routers.dashboard.service=api@internal
       - homepage.group=Infrastructure
@@ -57,9 +64,9 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.whoami.rule=Host(`${SERVER_DOMAIN}`, `${SERVER_IP}`)
-      - traefik.http.routers.whoami.entrypoints=web
-      #- traefik.http.routers.whoami.tls.certresolver=letsencrypt
+      - traefik.http.routers.whoami.rule=Host(`${SERVER_DOMAIN}`)
+      - traefik.http.routers.whoami.entrypoints=websecure
+      - traefik.http.routers.whoami.tls.certresolver=myresolver
     security_opt:
       - no-new-privileges:true
 

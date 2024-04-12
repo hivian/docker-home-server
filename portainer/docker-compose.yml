@@ -13,7 +13,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.portainer.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
-      - traefik.http.routers.portainer.entrypoints=web
+      - traefik.http.routers.portainer.entrypoints=websecure
       - traefik.http.services.portainer.loadbalancer.server.port=9000
       - homepage.group=Infrastructure
       - homepage.name=Portainer
