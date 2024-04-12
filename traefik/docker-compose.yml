@@ -35,6 +35,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${VOLUME_PATH}/letsencrypt:/letsencrypt
+      - ${VOLUME_PATH}/config.yaml:/etc/traefik/config.yaml
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -42,16 +43,7 @@ services:
       - traefik.http.routers.traefik.tls=true
       - traefik.http.routers.traefik.tls.domains[0].main=${SERVER_DOMAIN}
       - traefik.http.routers.traefik.tls.domains[0].sans="*.${SERVER_DOMAIN}"
-      #- traefik.http.routers.traefik.tls.domains[1].main=${WLED_DOMAIN}.${SERVER_DOMAIN}
-      #- traefik.http.routers.traefik.tls.domains[1].sans="*.${WLED_DOMAIN}.${SERVER_DOMAIN}"
       - traefik.http.routers.traefik.tls.certresolver=myresolver
-      ## WLED
-      #- traefik.http.routers.wled.service=wled
-      #- traefik.http.routers.wled.rule=Host(`${WLED_DOMAIN}.${SERVER_DOMAIN}`)
-      #- traefik.http.routers.wled.entrypoints=websecure
-      #- traefik.http.services.wled.loadbalancer.servers.url="http://${WLED_IP}:80"
-      #- traefik.http.routers.wled.tls.certresolver=myresolver
-      ##
       - traefik.http.routers.dashboard.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
       - traefik.http.routers.dashboard.service=api@internal
       - homepage.group=Infrastructure
