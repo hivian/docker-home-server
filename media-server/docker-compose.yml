@@ -175,10 +175,10 @@ services:
       - homepage.group=Media
       - homepage.name=Jellyfin
       - homepage.icon=jellyfin
-      - homepage.href=http://${JELLYFIN_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.href=https://${JELLYFIN_SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.description=Watch movies and TV shows.
       - homepage.widget.type=jellyfin
-      - homepage.widget.url=http://${JELLYFIN_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.url=https://${JELLYFIN_SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.widget.key=${JELLYFIN_API_KEY}
       - homepage.widget.enableBlocks=true
       - homepage.widget.enableNowPlaying=true
@@ -211,10 +211,10 @@ services:
       - homepage.group=Media
       - homepage.name=Jellyseerr
       - homepage.icon=jellyseerr
-      - homepage.href=http://${JELLYSEERR_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.href=https://${JELLYSEERR_SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.description=Request movies and TV shows.
       - homepage.widget.type=jellyseerr
-      - homepage.widget.url=http://${JELLYSEERR_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.url=https://${JELLYSEERR_SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.widget.key=${JELLYSEERR_API_KEY}
       - homepage.widget.fields=["pending", "approved", "available"]
     security_opt:

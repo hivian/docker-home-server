@@ -38,7 +38,7 @@ services:
       - homepage.group=Media
       - homepage.name=Owncloud
       - homepage.icon=owncloud
-      - homepage.href=http://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.href=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.description=File backup and synchronization
     security_opt:
       - no-new-privileges:true
