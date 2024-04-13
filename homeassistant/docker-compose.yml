@@ -1,0 +1,30 @@
+services:
+  homeassistant:
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    container_name: homeassistant
+    volumes:
+      - ${VOLUME_PATH}/config/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    ports:
+      - "8123:8123"
+    networks:
+      - traefik-network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homeassistant.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.homeassistant.entrypoints=websecure
+      - traefik.http.services.homeassistant.loadbalancer.server.port=8123
+      - homepage.group=Smart home
+      - homepage.name=Home assistant
+      - homepage.icon=home-assistant
+      - homepage.href=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=Home automation
+      - homepage.widget.type=homeassistant
+      - homepage.widget.url=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.key=${HOMEASSISTANT_API_KEY}
+      - homepage.widget.fields=["people_home", "lights_on", "switches_on"]
+
+networks:
+  traefik-network:
+    external: true

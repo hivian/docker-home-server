@@ -35,7 +35,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${VOLUME_PATH}/letsencrypt:/letsencrypt
-      - ${VOLUME_PATH}/config.yaml:/etc/traefik/config.yaml
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -78,3 +77,4 @@ networks:
     ipam:
       config:
         - subnet: 172.23.0.0/16
+          gateway: 172.23.0.1
