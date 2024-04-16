@@ -26,3 +26,23 @@ docker network create traefik-network
 ## Dashboard
 
 The default dashboard is [homepage from benphelps](https://github.com/benphelps/homepage) (```./homepage```). Most services are already configured to appear on the dashboard when they are up and running.
+
+## Services
+
+| **Application**                 | **Description**                      |                                  
+|---------------------------------|--------------------------------------|
+| [Jellyfin](https://jellyfin.org/) | Handles the work of serving media files to various player clients
+| [Jellyseerr](https://github.com/Fallenbagel/jellyseerr) | Request management UI and media discovery tool for Jellyfin, Sonarr & Radarr ecosystem
+| [Sonarr](https://sonarr.tv) | Automatically searches for torrents for TV series, watches for new episodes
+| [Radarr](https://radarr.video) | Automatically searches for torrents for Movies                                              
+| [Bazarr](https://www.bazarr.media/) | Companion application to Sonarr and Radarr that manages and downloads subtitles                                                                        
+| [Prowlarr](https://prowlarr.com/) | Proxy for various tracker sites. Takes queries from Sonarr/Radarr and translates them into tracker-site-specific queries and relays responses  
+| [Gluetun](https://github.com/qdm12/gluetun) | VPN client to any VPN service providers
+| [QBittorrent](https://www.qbittorrent.org/) | BitTorrent client with a web interface. Handles downloads given by Sonarr/Radarr. Use Gluetun network for privacy.
+| [Homepage](https://gethomepage.dev)| Home services dashboard
+| [Traefik](https://traefik.io)| Reverse proxy. Configures itself automatically and dynamically via labels in Docker
+| [Pihole](https://pi-hole.net/)  |  Network-wide software for blocking ads & tracking
+| [Unbound](https://github.com/MatthewVance/unbound-docker)  |  Recursive and caching DNS server. Listen only for queries from Pi-hole
+| [Home Assistant](https://www.home-assistant.io/) | Home automation
+
+
