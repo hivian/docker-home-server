@@ -7,7 +7,7 @@ Even though being only used on your local network it uses ```https``` via a wild
 You can still access from all around the world via a VPN e.g. Wireguard
 Traefik is the reverse proxy for all the services.
 
-![Homepage](https://raw.githubusercontent.com/hivian/docker-home/master/homepage-screen.png)
+![Homepage](https://raw.githubusercontent.com/hivian/docker-home/master/dashboard.png)
 
 ## Prerequisites
 
