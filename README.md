@@ -1,9 +1,9 @@
-# Homeserver
+# Docker-home
 
 A robust and extensible homeserver setup.
 
 It is designed to be hosted and used only on your local network. 
-Even though being only used on my local network it uses ```https``` via a wildcard certificate for everything.
+Even though being only used on your local network it uses ```https``` via a wildcard certificate for every service.
 You can still access from all around the world via a VPN e.g. Wireguard
 Traefik is the reverse proxy for all the services.
 
