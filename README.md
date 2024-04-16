@@ -15,7 +15,7 @@ Traefik is the reverse proxy for all the services.
 - Domain (e.g [Cloudflare](https://www.cloudflare.com/))
 - DNS A-record pointing to your main server ip (e.g. 192.168.1.2)
 - Wildcard CNAME record for your services, pointing to your A-record domain
-- Docker-compose.yml files make use of environment variables. Rename all ```.env_template``` files in the parent folder and subfolders to ```.env```, then update them with your information.
+- Docker-compose.yml files make use of environment variables. Create an ```.env``` file in the parent folder and in each service subfolder, then update them with your information.
 
 ## Initial Setup
 
