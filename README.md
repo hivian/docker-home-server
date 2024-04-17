@@ -12,14 +12,14 @@ It is designed to be hosted and used only on your local network. Even though bei
 - Domain (e.g [Cloudflare](https://www.cloudflare.com/))
 - DNS A-record pointing to your main server ip (e.g. 192.168.1.2)
 - Wildcard CNAME record for your services, pointing to your A-record domain
-- Docker-compose.yml files make use of environment variables. Create an ```.env``` file in the parent folder and in each service subfolder, then update them with your information.
+- Docker compose files make use of environment variables. ```mv .env.template .env``` in root folder and subfolders, then update variables accordingly
 
 ## Initial Setup
 
 Run 
 ```
 docker network create traefik-network
-./docker-compose.sh ACTIVE_SERVICES up -d
+./docker-compose ACTIVE_SERVICES up -d
 ```
 
 ## Dashboard
