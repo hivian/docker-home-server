@@ -43,5 +43,7 @@ The default dashboard is [homepage from benphelps](https://github.com/benphelps/
 | [Pihole](https://pi-hole.net/)  |  Network-wide software for blocking ads & tracking
 | [Unbound](https://github.com/MatthewVance/unbound-docker)  |  Recursive and caching DNS server. Listen only for queries from Pi-hole
 | [Home Assistant](https://www.home-assistant.io/) | Home automation
+| [Owncloud](https://owncloud.com/) | Open source and lightweight file synchronization system
+| [Speedtest Tracker](https://github.com/alexjustesen/speedtest-tracker) | Internet performance tracking application
 
 
