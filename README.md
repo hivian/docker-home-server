@@ -19,7 +19,7 @@ It is designed to be hosted and used only on your local network. Even though bei
 Run 
 ```
 docker network create traefik-network
-./docker-compose ACTIVE_SERVICES up -d
+./docker-compose.sh ACTIVE_SERVICES up -d
 ```
 
 ## Dashboard
