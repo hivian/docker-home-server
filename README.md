@@ -45,5 +45,6 @@ The default dashboard is [homepage from benphelps](https://github.com/benphelps/
 | [Home Assistant](https://www.home-assistant.io/) | Home automation
 | [Owncloud](https://owncloud.com/) | Open source and lightweight file synchronization system
 | [Speedtest Tracker](https://github.com/alexjustesen/speedtest-tracker) | Internet performance tracking application
+| [Portainer](https://www.portainer.io/) | Simplifies Docker container management
 
 
