@@ -5,10 +5,13 @@ then
   export $(cat .env | sed 's/#.*//g' | xargs)
 fi
 
-for service in */
+servicesEnv="$(printenv "$1")"
+IFS=',' read -r -a services <<< "$servicesEnv"
+
+for service in ${services[*]}
 do
     cd $service
-    docker compose $1 $2 $3
+    docker compose $2 $3 $4
     cd ..
 done
 
