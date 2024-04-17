@@ -12,7 +12,7 @@ It is designed to be hosted and used only on your local network. Even though bei
 - Domain (e.g [Cloudflare](https://www.cloudflare.com/))
 - DNS A-record pointing to your main server ip (e.g. 192.168.1.2)
 - Wildcard CNAME record for your services, pointing to your A-record domain
-- Docker compose files make use of environment variables. ```mv .env.example .env``` in root folder and subfolders, then update variables accordingly
+- Docker compose files make use of environment variables. ```mv .env.template .env``` in root folder and subfolders, then update variables accordingly
 
 ## Initial Setup
 
