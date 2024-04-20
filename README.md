@@ -1,4 +1,4 @@
-# Docker-home
+# Docker Home Server
 
 A robust and extensible homeserver setup.
 
