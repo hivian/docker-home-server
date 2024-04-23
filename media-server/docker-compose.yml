@@ -71,8 +71,6 @@ services:
     volumes:
       - ${VOLUME_PATH}/config/qbittorrent:/config
       - ${VOLUME_PATH}/downloads:/downloads
-    labels:
-      - autoheal=true
     healthcheck:
       test: curl google.com || exit 1
       interval: 30s
@@ -81,6 +79,16 @@ services:
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
+    labels:
+      - autoheal=true
+      - homepage.group=Media
+      - homepage.name=qBittorrent
+      - homepage.icon=qbittorrent
+      - homepage.href=https://${QBITTORRENT_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=P2P BitTorrent client
+      - homepage.widget.type=qbittorrent
+      - homepage.widget.url=https://${QBITTORRENT_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.fields=["leech", "download", "seed", "upload"]
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
