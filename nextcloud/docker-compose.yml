@@ -1,0 +1,72 @@
+services:
+  nextcloud:
+    image: nextcloud:stable
+    container_name: nextcloud
+    environment:
+      REDIS_HOST: redis
+      MYSQL_HOST: mariadb:3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      PHP_MEMORY_LIMIT: 8G
+      PHP_UPLOAD_LIMIT: 8G
+    volumes:
+      - ${VOLUME_PATH}/data:/var/www/html
+    networks:
+      - traefik-network
+    depends_on:
+      - mariadb
+      - redis
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.nextcloud.entrypoints=websecure
+      - traefik.http.services.nextcloud.loadbalancer.server.port=80
+      - homepage.group=Files
+      - homepage.name=Nextcloud
+      - homepage.icon=nextcloud
+      - homepage.href=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=File backup and synchronization
+      - homepage.widget.type=nextcloud
+      - homepage.widget.url=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.username=${NEXTCLOUD_USERNAME}
+      - homepage.widget.password=${NEXTCLOUD_PASSWORD}
+      - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers", "numfiles", "numshares"]
+    security_opt:
+      - no-new-privileges:true
+
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: nextcloud-mariadb
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    networks:
+      - traefik-network
+    volumes:
+      - ${VOLUME_PATH}/mariadb-config:/config
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+  redis:
+    container_name: nextcloud-redis
+    image: redis:alpine
+    networks:
+      - traefik-network
+    volumes:
+      - ${VOLUME_PATH}/redis-data:/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+
+networks:
+  traefik-network:
+    external: true
