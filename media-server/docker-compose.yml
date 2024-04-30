@@ -11,7 +11,6 @@ services:
       - 6767:6767 # bazarr
       - 8989:8989 # sonarr
       - 7878:7878 # radarr
-      - 6789:6789 # nzbget
       - 8082:8082 # qbit
       - 6881:6881 # qbit
       - 6881:6881/udp # qbit
@@ -31,11 +30,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-
-      - traefik.http.routers.nzbget.rule=Host(`${NZBGET_SUB_DOMAIN}.${SERVER_DOMAIN}`)
-      - traefik.http.routers.nzbget.entrypoints=websecure
-      - traefik.http.routers.nzbget.service=nzbget
-      - traefik.http.services.nzbget.loadbalancer.server.port=6789
 
       - traefik.http.routers.qbittorrent.rule=Host(`${QBITTORRENT_SUB_DOMAIN}.${SERVER_DOMAIN}`)
       - traefik.http.routers.qbittorrent.entrypoints=websecure
@@ -63,31 +57,6 @@ services:
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
     security_opt:
       - no-new-privileges:true
-
-  nzbget:
-    image: lscr.io/linuxserver/nzbget:latest
-    container_name: nzbget
-    network_mode: service:gluetun
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${VOLUME_PATH}/config/nzbget:/config
-      - ${VOLUME_PATH}/downloads:/download/s
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    labels:
-      - autoheal=true
-      - homepage.group=Media
-      - homepage.name=NZBGet
-      - homepage.icon=nzbget
-      - homepage.href=${URL_SCHEME}://${NZBGET_SUB_DOMAIN}.${SERVER_DOMAIN}
-      - homepage.description=Usenet client
-      - homepage.widget.type=nzbget
-      - homepage.widget.url=${URL_SCHEME}://${NZBGET_SUB_DOMAIN}.${SERVER_DOMAIN}
-      - homepage.widget.fields=["rate", "remaining", "downloaded"]
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
