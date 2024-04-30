@@ -26,10 +26,10 @@ services:
       - homepage.group=Files
       - homepage.name=Nextcloud
       - homepage.icon=nextcloud
-      - homepage.href=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.href=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.description=File backup and synchronization
       - homepage.widget.type=nextcloud
-      - homepage.widget.url=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.url=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.widget.username=${NEXTCLOUD_USERNAME}
       - homepage.widget.password=${NEXTCLOUD_PASSWORD}
       - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers", "numfiles", "numshares"]

@@ -18,10 +18,10 @@ services:
       - homepage.group=Smart home
       - homepage.name=Home assistant
       - homepage.icon=home-assistant
-      - homepage.href=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.href=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.description=Home automation
       - homepage.widget.type=homeassistant
-      - homepage.widget.url=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.url=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.widget.key=${HOMEASSISTANT_API_KEY}
       - homepage.widget.fields=["people_home", "lights_on", "switches_on"]
 

@@ -22,10 +22,10 @@ services:
         - homepage.group=Infrastructure
         - homepage.name=Speedtest tracker
         - homepage.icon=speedtest-tracker
-        - homepage.href=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+        - homepage.href=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
         - homepage.description=Internet performance tracking
         - homepage.widget.type=speedtest
-        - homepage.widget.url=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+        - homepage.widget.url=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
         - homepage.widget.fields=["download", "upload", "ping"]
       security_opt:
       - no-new-privileges:true

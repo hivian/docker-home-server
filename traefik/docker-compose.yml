@@ -5,7 +5,6 @@ services:
     command:
       - "--log.level=DEBUG"
       - "--accesslog=true"
-      - "--api.insecure=true"
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -48,10 +47,10 @@ services:
       - homepage.group=Infrastructure
       - homepage.name=Traefik
       - homepage.icon=traefik
-      - homepage.href=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.href=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.description=Reverse proxy
       - homepage.widget.type=traefik
-      - homepage.widget.url=https://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.url=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.widget.fields=["routers", "services", "middleware"]
     security_opt:
       - no-new-privileges:true
