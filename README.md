@@ -1,8 +1,8 @@
 # Docker Home Server
 
-A robust and extensible homeserver setup.
+A robust and extensible self-hosted homeserver setup.
 
-It is designed to be hosted and used only on your local network. Even though being only used on your local network it uses ```https``` via a wildcard certificate for every service. You can still access from all around the world via a VPN e.g. Wireguard. Traefik is the reverse proxy for all the services.
+Even though being only used on your local network it uses ```https``` via a wildcard certificate for every service. You can still access from all around the world via a VPN e.g. Wireguard. Traefik is the reverse proxy for all the services.
 
 ![Homepage](https://raw.githubusercontent.com/hivian/docker-home/master/dashboard.png)
 
