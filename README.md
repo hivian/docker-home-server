@@ -1,6 +1,6 @@
 # Docker Home Server
 
-A robust and extensible self-hosted homeserver setup.
+A self-hosted homeserver setup.
 
 Even though being only used on your local network it uses ```https``` via a wildcard certificate for every service. You can still access from all around the world via a VPN e.g. Wireguard. Traefik is the reverse proxy for all the services.
 
@@ -9,7 +9,7 @@ Even though being only used on your local network it uses ```https``` via a wild
 ## Prerequisites
 
 - Server running docker
-- Domain (e.g [Cloudflare](https://www.cloudflare.com/))
+- [Cloudflare](https://www.cloudflare.com/) Domain
 - DNS A-record pointing to your main server ip (e.g. 192.168.1.2)
 - Wildcard CNAME record for your services, pointing to your A-record domain
 - Docker compose files make use of environment variables. ```mv .env.template .env``` in root folder and subfolders, then update variables accordingly
