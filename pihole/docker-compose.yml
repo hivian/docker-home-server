@@ -11,13 +11,13 @@ services:
       TZ: ${TZ}
       WEBPASSWORD: ${PASSWORD}
       VIRTUAL_HOST: ${VIRTUAL_HOST}
-      PIHOLE_DNS_: 172.23.0.21#5053
+      PIHOLE_DNS_: 172.18.0.21#5053
     volumes:
       - ${VOLUME_PATH}/etc-pihole:/etc/pihole
       - ${VOLUME_PATH}/etc-dnsmasq.d:/etc/dnsmasq.d
     networks:
       traefik-network:
-        ipv4_address: 172.23.0.20
+        ipv4_address: 172.18.0.20
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
     image: "mvance/unbound:latest"
     networks:
       traefik-network:
-        ipv4_address: 172.23.0.21
+        ipv4_address: 172.18.0.21
     ports:
       - "5053:53/tcp"
       - "5053:53/udp"
