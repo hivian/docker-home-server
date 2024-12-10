@@ -24,3 +24,6 @@ done
 
 # Test gluetun connection
 # docker run --rm --network=container:gluetun alpine:3.18 sh -c \"apk add wget && wget -qO- https://ipinfo.io\"
+
+# Fix permission issue for grafana volume
+# chown 472:root ./data/.

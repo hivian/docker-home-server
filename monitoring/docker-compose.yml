@@ -1,0 +1,54 @@
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    user: root
+    ports:
+      - '9090:9090'
+    volumes:
+      - ${VOLUME_PATH}/prometheus/data:/prometheus
+      - ${VOLUME_PATH}/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+    networks:
+      - traefik-network
+    restart: always
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - '3030:3000'
+    volumes:
+      - ${VOLUME_PATH}/grafana/data:/var/lib/grafana
+      - ${VOLUME_PATH}/grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+    environment:
+      GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      GF_AUTH_DISABLE_SIGNOUT_MENU: "true"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    networks:
+      - traefik-network
+    depends_on:
+      - prometheus
+    restart: always
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor
+    ports:
+      - '8088:8080'
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    devices:
+      - /dev/kmsg
+    networks:
+     - traefik-network
+
+
+networks:
+  traefik-network:
+    external: true
