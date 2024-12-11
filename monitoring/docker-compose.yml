@@ -21,17 +21,32 @@ services:
     volumes:
       - ${VOLUME_PATH}/grafana/data:/var/lib/grafana
       - ${VOLUME_PATH}/grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
-    environment:
-      GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "true"
-      GF_AUTH_ANONYMOUS_ENABLED: "true"
-      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
-      GF_AUTH_DISABLE_SIGNOUT_MENU: "true"
-      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    #environment:
+    #  GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "true"
+    #  GF_AUTH_ANONYMOUS_ENABLED: "true"
+    #  GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+    #  GF_AUTH_DISABLE_SIGNOUT_MENU: "true"
+    #  GF_AUTH_DISABLE_LOGIN_FORM: "true"
     networks:
       - traefik-network
     depends_on:
       - prometheus
     restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+      - homepage.group=Infrastructure
+      - homepage.name=Grafana
+      - homepage.icon=grafana
+      - homepage.href=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=Monitoring dashboard
+      - homepage.widget.type=grafana
+      - homepage.widget.url=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.username=${GRAFANA_USERNAME}
+      - homepage.widget.password=${GRAFANA_PASSWORD}
+      - homepage.widget.fields=["dashboards", "datasources", "totalalerts", "alertstriggered"]
   cadvisor:
     container_name: cadvisor
     image: gcr.io/cadvisor/cadvisor
