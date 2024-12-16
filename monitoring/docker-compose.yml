@@ -13,6 +13,9 @@ services:
     networks:
       - traefik-network
     restart: always
+    security_opt:
+      - no-new-privileges:true
+
   grafana:
     container_name: grafana
     image: grafana/grafana
@@ -41,6 +44,9 @@ services:
       - homepage.widget.username=${GRAFANA_USERNAME}
       - homepage.widget.password=${GRAFANA_PASSWORD}
       - homepage.widget.fields=["dashboards", "datasources", "totalalerts", "alertstriggered"]
+    security_opt:
+      - no-new-privileges:true
+
   cadvisor:
     container_name: cadvisor
     image: gcr.io/cadvisor/cadvisor
@@ -56,6 +62,9 @@ services:
       - traefik-network
     depends_on:
       - prometheus
+    security_opt:
+      - no-new-privileges:true
+
   node-exporter:
     container_name: node-exporter
     image: quay.io/prometheus/node-exporter
@@ -69,6 +78,9 @@ services:
       - traefik-network
     depends_on:
       - prometheus
+    security_opt:
+      - no-new-privileges:true
+
   alertmanager:
     container_name: alertmanager
     image: prom/alertmanager
@@ -78,6 +90,8 @@ services:
       - ${VOLUME_PATH}/alert-manager/data:/data
       - ${VOLUME_PATH}/alert-manager/config:/config
     command: '--config.file=/config/alertmanager.yml'
+    security_opt:
+      - no-new-privileges:true
 
 networks:
   traefik-network:
