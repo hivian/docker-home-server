@@ -1,0 +1,113 @@
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    user: root
+    ports:
+      - '9090:9090'
+    volumes:
+      - ${VOLUME_PATH}/prometheus/data:/prometheus
+      - ${VOLUME_PATH}/prometheus/config:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+    networks:
+      - traefik-network
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.rule=Host(`${PROMETHEUS_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.prometheus.entrypoints=websecure
+      - traefik.http.services.prometheus.loadbalancer.server.port=9090
+      - homepage.group=Infrastructure
+      - homepage.name=Prometheus
+      - homepage.icon=prometheus
+      - homepage.href=${URL_SCHEME}://${PROMETHEUS_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=Monitoring and alerting
+      - homepage.widget.type=prometheus
+      - homepage.widget.url=${URL_SCHEME}://${PROMETHEUS_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.fields=["targets_up", "targets_down", "targets_total"]
+    security_opt:
+      - no-new-privileges:true
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - '3030:3000'
+    volumes:
+      - ${VOLUME_PATH}/grafana/data:/var/lib/grafana
+      - ${VOLUME_PATH}/grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+    networks:
+      - traefik-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=Host(`${GRAFANA_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+      - homepage.group=Infrastructure
+      - homepage.name=Grafana
+      - homepage.icon=grafana
+      - homepage.href=${URL_SCHEME}://${GRAFANA_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=Monitoring dashboard
+      - homepage.widget.type=grafana
+      - homepage.widget.url=${URL_SCHEME}://${GRAFANA_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.username=${GRAFANA_USERNAME}
+      - homepage.widget.password=${GRAFANA_PASSWORD}
+      - homepage.widget.fields=["dashboards", "datasources", "totalalerts", "alertstriggered"]
+    security_opt:
+      - no-new-privileges:true
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    devices:
+      - /dev/kmsg
+    networks:
+      - traefik-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+  node-exporter:
+    container_name: node-exporter
+    image: quay.io/prometheus/node-exporter
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - traefik-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+  alertmanager:
+    container_name: alertmanager
+    image: prom/alertmanager
+    volumes:
+      - ${VOLUME_PATH}/alert-manager/data:/data
+      - ${VOLUME_PATH}/alert-manager/config:/config
+    command: '--config.file=/config/alertmanager.yml'
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik-network:
+    external: true
