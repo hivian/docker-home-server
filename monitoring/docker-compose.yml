@@ -7,7 +7,7 @@ services:
       - '9090:9090'
     volumes:
       - ${VOLUME_PATH}/prometheus/data:/prometheus
-      - ${VOLUME_PATH}/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ${VOLUME_PATH}/prometheus/config:/etc/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
     networks:
@@ -21,12 +21,6 @@ services:
     volumes:
       - ${VOLUME_PATH}/grafana/data:/var/lib/grafana
       - ${VOLUME_PATH}/grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
-    #environment:
-    #  GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "true"
-    #  GF_AUTH_ANONYMOUS_ENABLED: "true"
-    #  GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
-    #  GF_AUTH_DISABLE_SIGNOUT_MENU: "true"
-    #  GF_AUTH_DISABLE_LOGIN_FORM: "true"
     networks:
       - traefik-network
     depends_on:
@@ -50,8 +44,6 @@ services:
   cadvisor:
     container_name: cadvisor
     image: gcr.io/cadvisor/cadvisor
-    ports:
-      - '8088:8080'
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -61,9 +53,11 @@ services:
     devices:
       - /dev/kmsg
     networks:
-     - traefik-network
-  node_exporter:
-    container_name: node
+      - traefik-network
+    depends_on:
+      - prometheus
+  node-exporter:
+    container_name: node-exporter
     image: quay.io/prometheus/node-exporter
     command:
       - '--path.rootfs=/host'
@@ -73,8 +67,17 @@ services:
       - '/:/host:ro,rslave'
     networks:
       - traefik-network
-
-
+    depends_on:
+      - prometheus
+  alertmanager:
+    container_name: alertmanager
+    image: prom/alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ${VOLUME_PATH}/alert-manager/data:/data
+      - ${VOLUME_PATH}/alert-manager/config:/config
+    command: '--config.file=/config/alertmanager.yml'
 
 networks:
   traefik-network:
