@@ -62,6 +62,18 @@ services:
       - /dev/kmsg
     networks:
      - traefik-network
+  node_exporter:
+    container_name: node
+    image: quay.io/prometheus/node-exporter
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - traefik-network
+
 
 
 networks:
