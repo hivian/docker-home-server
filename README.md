@@ -30,20 +30,21 @@ The default dashboard is [homepage from benphelps](https://github.com/benphelps/
 
 | **Application**                 | **Description**                      |                                  
 |---------------------------------|--------------------------------------|
-| [Jellyfin](https://jellyfin.org/) | Handles the work of serving media files to various player clients
+| [Jellyfin](https://jellyfin.org) | Handles the work of serving media files to various player clients
 | [Jellyseerr](https://github.com/Fallenbagel/jellyseerr) | Request management UI and media discovery tool for Jellyfin, Sonarr & Radarr ecosystem
 | [Sonarr](https://sonarr.tv) | Automatically searches for torrents for TV series, watches for new episodes
 | [Radarr](https://radarr.video) | Automatically searches for torrents for Movies                                              
-| [Bazarr](https://www.bazarr.media/) | Companion application to Sonarr and Radarr that manages and downloads subtitles                                                                        
-| [Prowlarr](https://prowlarr.com/) | Proxy for various tracker sites. Takes queries from Sonarr/Radarr and translates them into tracker-site-specific queries and relays responses  
+| [Bazarr](https://www.bazarr.media) | Companion application to Sonarr and Radarr that manages and downloads subtitles                                                                        
+| [Prowlarr](https://prowlarr.com) | Proxy for various tracker sites. Takes queries from Sonarr/Radarr and translates them into tracker-site-specific queries and relays responses  
 | [Gluetun](https://github.com/qdm12/gluetun) | VPN client to any VPN service providers
-| [QBittorrent](https://www.qbittorrent.org/) | BitTorrent client with a web interface. Handles downloads given by Sonarr/Radarr. Use Gluetun network for privacy.
+| [QBittorrent](https://www.qbittorrent.org) | BitTorrent client with a web interface. Handles downloads given by Sonarr/Radarr. Use Gluetun network for privacy.
 | [Homepage](https://gethomepage.dev)| Home services dashboard
-| [Traefik](https://traefik.io)| Reverse proxy. Configures itself automatically and dynamically via labels in Docker
+| [Traefik](https://traefik.io) | Reverse proxy. Configures itself automatically and dynamically via labels in Docker
 | [Pihole](https://pi-hole.net/)  |  Network-wide software for blocking ads & tracking
 | [Unbound](https://github.com/MatthewVance/unbound-docker)  |  Recursive and caching DNS server. Listen only for queries from Pi-hole
-| [Home Assistant](https://www.home-assistant.io/) | Home automation
-| [Nextcloud](https://nextcloud.com/) | Open source data storage and synchronization system
+| [Prometheus](https://prometheus.io) | Monitoring and alerting system. Prometheus collects metrics from targets by scraping metrics HTTP endpoints
+| [Grafana](https://grafana.com/) | Complementing Prometheus, Grafana serves as a dynamic visualization tool that transforms raw data into meaningful insights
+| [Nextcloud](https://nextcloud.com) | Open source data storage and synchronization system
 | [Speedtest Tracker](https://github.com/alexjustesen/speedtest-tracker) | Internet performance tracking application
 | [Portainer](https://www.portainer.io/) | Simplifies Docker container management
 
