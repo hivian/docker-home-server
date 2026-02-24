@@ -44,8 +44,7 @@ services:
       - UMASK=022
     volumes:
       - ${VOLUME_PATH}/config/transmission:/config
-      - ${VOLUME_PATH}/downloads:/downloads
-      - ${VOLUME_PATH}/watch:/watch
+      - ${VOLUME_PATH}/media:/downloads
     healthcheck:
       test: curl -f http://localhost:9091 || exit 1
       interval: 30s
@@ -74,8 +73,8 @@ services:
       - TZ=${TZ}
     volumes:
       - ${VOLUME_PATH}/config/jellyfin:/config
-      - ${VOLUME_PATH}/complete/tv:/data/tvshows
-      - ${VOLUME_PATH}/complete/movies:/data/movies
+      - ${VOLUME_PATH}/media/tv:/data/tvshows
+      - ${VOLUME_PATH}/media/movies:/data/movies
     ports:
       - 8096:8096
     networks:
