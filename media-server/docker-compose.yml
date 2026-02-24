@@ -7,9 +7,9 @@ services:
     devices:
       - /dev/net/tun:/dev/net/tun
     ports:
-      - 8082:8082 # qbit
-      - 6881:6881 # qbit
-      - 6881:6881/udp # qbit
+      - 9091:9091       # transmission
+      - 51413:51413     # transmission torrent TCP
+      - 51413:51413/udp # transmission torrent UDP
     volumes:
       - ${VOLUME_PATH}/config/gluetun:/gluetun
     networks:
@@ -26,28 +26,28 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.qbittorrent.rule=Host(`${QBITTORRENT_SUB_DOMAIN}.${SERVER_DOMAIN}`)
-      - traefik.http.routers.qbittorrent.entrypoints=websecure
-      - traefik.http.routers.qbittorrent.service=qbittorrent
-      - traefik.http.services.qbittorrent.loadbalancer.server.port=8082
+      - traefik.http.routers.transmission.rule=Host(`${TRANSMISSION_SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.transmission.entrypoints=websecure
+      - traefik.http.routers.transmission.service=transmission
+      - traefik.http.services.transmission.loadbalancer.server.port=9091
     security_opt:
       - no-new-privileges:true
 
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
     network_mode: service:gluetun
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - WEBUI_PORT=8082
       - UMASK=022
     volumes:
-      - ${VOLUME_PATH}/config/qbittorrent:/config
+      - ${VOLUME_PATH}/config/transmission:/config
       - ${VOLUME_PATH}/downloads:/downloads
+      - ${VOLUME_PATH}/watch:/watch
     healthcheck:
-      test: curl google.com || exit 1
+      test: curl -f http://localhost:9091 || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
@@ -57,12 +57,12 @@ services:
     labels:
       - autoheal=true
       - homepage.group=Media
-      - homepage.name=qBittorrent
-      - homepage.icon=qbittorrent
-      - homepage.href=${URL_SCHEME}://${QBITTORRENT_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.name=Transmission
+      - homepage.icon=transmission
+      - homepage.href=${URL_SCHEME}://${TRANSMISSION_SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.description=P2P BitTorrent client
-      - homepage.widget.type=qbittorrent
-      - homepage.widget.url=${URL_SCHEME}://${QBITTORRENT_SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.type=transmission
+      - homepage.widget.url=${URL_SCHEME}://${TRANSMISSION_SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.widget.fields=["leech", "download", "seed", "upload"]
 
   jellyfin:
