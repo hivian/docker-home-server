@@ -1,0 +1,29 @@
+services:
+  dockge:
+    image: louislam/dockge:latest
+    container_name: dockge
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${VOLUME_PATH}/data:/app/data
+      - ${STACKS_PATH}:${STACKS_PATH}
+    environment:
+      - DOCKGE_STACKS_DIR=${STACKS_PATH}
+    restart: unless-stopped
+    networks:
+      - traefik-network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dockge.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.dockge.entrypoints=websecure
+      - traefik.http.services.dockge.loadbalancer.server.port=5001
+      - homepage.group=Infrastructure
+      - homepage.name=Dockge
+      - homepage.icon=dockge
+      - homepage.href=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=Stack manager
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik-network:
+    external: true
