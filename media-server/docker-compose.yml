@@ -55,7 +55,7 @@ services:
       - TORRENTING_PORT=6881
     volumes:
       - ${VOLUME_PATH}/config/qbittorrent:/config
-      - ${VOLUME_PATH}/media:/downloads
+      - ${MEDIA_PATH}:/downloads
     healthcheck:
       test: curl -f http://localhost:8082 || exit 1
       interval: 30s
@@ -113,8 +113,12 @@ services:
       - TZ=${TZ}
     volumes:
       - ${VOLUME_PATH}/config/jellyfin:/config
-      - ${VOLUME_PATH}/media/tv:/data/tvshows
-      - ${VOLUME_PATH}/media/movies:/data/movies
+      - ${MEDIA_PATH}/tv:/data/tvshows
+      - ${MEDIA_PATH}/movies:/data/movies
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - "110" # render, cf. getent group render
     ports:
       - 8096:8096
     networks:
@@ -147,8 +151,8 @@ services:
       - TZ=${TZ}
     volumes:
       - ${VOLUME_PATH}/config/unmanic:/config
-      - ${VOLUME_PATH}/media:/library
-      - ${VOLUME_PATH}/cache/unmanic:/tmp/unmanic
+      - ${MEDIA_PATH}:/library
+      - ${CACHE_PATH}/unmanic:/tmp/unmanic
     devices:
       - /dev/dri:/dev/dri
     group_add:
@@ -166,6 +170,20 @@ services:
       - homepage.icon=unmanic
       - homepage.href=${URL_SCHEME}://${UNMANIC_SUB_DOMAIN}.${SERVER_DOMAIN}
       - homepage.description=Library transcoding
+    security_opt:
+      - no-new-privileges:true
+
+  autoheal:
+    image: willfarrell/autoheal:latest
+    container_name: autoheal
+    network_mode: none # only talks to the docker socket
+    environment:
+      - TZ=${TZ}
+      - AUTOHEAL_CONTAINER_LABEL=autoheal
+      - AUTOHEAL_INTERVAL=30
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
 
