@@ -1,0 +1,38 @@
+services:
+  scrutiny:
+    image: ghcr.io/analogj/scrutiny:master-omnibus
+    container_name: scrutiny
+    environment:
+      TZ: ${TZ}
+      COLLECTOR_CRON_SCHEDULE: ${COLLECTOR_CRON_SCHEDULE}
+    volumes:
+      - /run/udev:/run/udev:ro
+      - ${VOLUME_PATH}/config:/opt/scrutiny/config
+      - ${VOLUME_PATH}/influxdb:/opt/scrutiny/influxdb
+    devices:
+      - /dev/sda:/dev/sda
+      - /dev/sdb:/dev/sdb
+    cap_add:
+      - SYS_RAWIO
+    restart: unless-stopped
+    networks:
+      - traefik-network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.scrutiny.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.scrutiny.entrypoints=websecure
+      - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+      - homepage.group=Infrastructure
+      - homepage.name=Scrutiny
+      - homepage.icon=scrutiny
+      - homepage.href=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=Disk health
+      - homepage.widget.type=scrutiny
+      - homepage.widget.url=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.fields=["passed", "failed"]
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik-network:
+    external: true
