@@ -104,6 +104,18 @@ services:
       - homepage.widget.type=jackett
       - homepage.widget.url=${URL_SCHEME}://${JACKETT_SUB_DOMAIN}.${SERVER_DOMAIN}
 
+  # same net namespace as gluetun: jackett reaches it at http://localhost:8191
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    network_mode: service:gluetun
+    environment:
+      - LOG_LEVEL=info
+      - TZ=${TZ}
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
   jellyfin:
     image: linuxserver/jellyfin:latest
     container_name: jellyfin
