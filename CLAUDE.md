@@ -19,8 +19,9 @@ docker network create traefik-network
 ./docker-compose.sh ACTIVE_SERVICES down
 ```
 
-**Operate on a single service stack directly:**
+**Operate on a single service stack directly** (root `.env` must be exported first, otherwise `VOLUMES_ROOT_PATH`, `PUID`, etc. are empty and containers start on blank configs under `/<stack>/config`):
 ```bash
+export $(cat .env | sed 's/#.*//g' | xargs)
 cd traefik && docker compose up -d
 cd media-server && docker compose down
 docker compose -f media-server/docker-compose.yml logs -f

@@ -27,7 +27,8 @@ services:
       - VPN_PORT_FORWARDING=on
       - VPN_PORT_FORWARDING_PROVIDER=protonvpn
       # push the NAT-PMP port into qBittorrent: same net namespace, WebUI auth off on this subnet
-      - 'VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c ''wget -qO- --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8082/api/v2/app/setPreferences'''
+      # retry ~2min: gluetun gets the port before qBittorrent's WebUI is up
+      - 'VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c ''for i in 1 2 3 4 5 6 7 8 9 10 11 12; do wget -qO- --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8082/api/v2/app/setPreferences && exit 0; sleep 10; done; exit 1'''
     restart: unless-stopped
     labels:
       - traefik.enable=true
