@@ -45,19 +45,23 @@ services:
       - homepage.description=AI agent piloting containers
 
   hermes-dockerproxy:
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    image: wollomatic/socket-proxy:1.13.2
     container_name: hermes-dockerproxy
+    # 65534 = nobody; group = host docker GID (getent group docker)
+    user: "65534:${DOCKER_GID}"
+    read_only: true
+    cap_drop:
+      - ALL
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      # ponytail: read + start/stop/restart only. POST=1 allows container create = root on host; enable only if needed
-      - CONTAINERS=1
-      - IMAGES=1
-      - INFO=1
-      - POST=0
-      - ALLOW_START=1
-      - ALLOW_STOP=1
-      - ALLOW_RESTARTS=1
+    # Allowlist by container name (IDs don't match, so no bypass). Others: listed in `docker ps` only.
+    # Never add containers that mount docker.sock (traefik, dockge, dockerproxy, autoheal): exec there = root on host
+    command:
+      - -listenip=0.0.0.0
+      - -allowfrom=hermes
+      - -allowHEAD=(/v1\..{1,2})?/_ping
+      - -allowGET=(/v1\..{1,2})?/(_ping|version|containers/json|containers/(jellyfin|qbittorrent|jackett|unmanic|homeassistant)/.*|exec/[^/]+/json)
+      - -allowPOST=/v1\..{1,2}/(containers/(jellyfin|qbittorrent|jackett|unmanic|homeassistant)/(start|stop|restart|kill|exec|resize|wait|attach)|exec/[^/]+/(start|resize))
     networks:
       - hermes-docker
     restart: unless-stopped
