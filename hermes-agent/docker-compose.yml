@@ -1,6 +1,11 @@
 services:
   hermes:
-    image: nousresearch/hermes-agent:latest
+    # libopus needed for Discord voice channels; rebuild with `docker compose build --pull` to update
+    build:
+      dockerfile_inline: |
+        FROM nousresearch/hermes-agent:latest
+        USER root
+        RUN apt-get update && apt-get install -y --no-install-recommends libopus0 && rm -rf /var/lib/apt/lists/*
     container_name: hermes
     command: gateway run
     environment:
