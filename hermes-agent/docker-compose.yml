@@ -1,0 +1,66 @@
+services:
+  hermes:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes
+    command: gateway run
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      HERMES_DASHBOARD: 1
+      HERMES_DASHBOARD_BASIC_AUTH_USERNAME: ${DASHBOARD_USER}
+      HERMES_DASHBOARD_BASIC_AUTH_PASSWORD: ${DASHBOARD_PASSWORD}
+      # Docker CLI shipped in the image talks to the filtered proxy, never the raw socket
+      DOCKER_HOST: tcp://hermes-dockerproxy:2375
+    volumes:
+      - ${VOLUME_PATH}/data:/opt/data
+    networks:
+      - traefik-network
+      - hermes-docker
+    depends_on:
+      - hermes-dockerproxy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-network
+      - traefik.http.routers.hermes.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
+      - traefik.http.routers.hermes.entrypoints=websecure
+      - traefik.http.services.hermes.loadbalancer.server.port=9119
+      - homepage.group=Infrastructure
+      - homepage.name=Hermes
+      - homepage.icon=mdi-robot
+      - homepage.href=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.description=AI agent piloting containers
+
+  hermes-dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: hermes-dockerproxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      # ponytail: read + start/stop/restart only. POST=1 allows container create = root on host; enable only if needed
+      - CONTAINERS=1
+      - IMAGES=1
+      - INFO=1
+      - POST=0
+      - ALLOW_START=1
+      - ALLOW_STOP=1
+      - ALLOW_RESTARTS=1
+    networks:
+      - hermes-docker
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik-network:
+    external: true
+  hermes-docker:
+    internal: true
