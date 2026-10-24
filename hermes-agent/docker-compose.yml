@@ -54,13 +54,13 @@ services:
       - ALL
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    # Allowlist by container name (IDs don't match, so no bypass). Others: listed in `docker ps` only.
+    # Allowlist by container name (IDs don't match, so no bypass). No `docker ps`: its labels leak API keys (homepage.widget.key).
     # Never add containers that mount docker.sock (traefik, dockge, dockerproxy, autoheal): exec there = root on host
     command:
       - -listenip=0.0.0.0
       - -allowfrom=hermes
       - -allowHEAD=(/v1\..{1,2})?/_ping
-      - -allowGET=(/v1\..{1,2})?/(_ping|version|containers/json|containers/(jellyfin|qbittorrent|jackett|unmanic|homeassistant)/.*|exec/[^/]+/json)
+      - -allowGET=(/v1\..{1,2})?/(_ping|version|containers/(jellyfin|qbittorrent|jackett|unmanic|homeassistant)/.*|exec/[^/]+/json)
       - -allowPOST=/v1\..{1,2}/(containers/(jellyfin|qbittorrent|jackett|unmanic|homeassistant)/(start|stop|restart|kill|exec|resize|wait|attach)|exec/[^/]+/(start|resize))
     networks:
       - hermes-docker
