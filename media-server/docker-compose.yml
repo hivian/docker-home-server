@@ -155,37 +155,6 @@ services:
     security_opt:
       - no-new-privileges:true
 
-  unmanic:
-    image: josh5/unmanic:latest
-    container_name: unmanic
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${VOLUME_PATH}/config/unmanic:/config
-      - ${MEDIA_PATH}:/library
-      - ${CACHE_PATH}/unmanic:/tmp/unmanic
-    devices:
-      - /dev/dri:/dev/dri
-    group_add:
-      - "110" # render group on this host, cf. getent group render
-    networks:
-      - traefik-network
-    restart: unless-stopped
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.unmanic.rule=Host(`${UNMANIC_SUB_DOMAIN}.${SERVER_DOMAIN}`)
-      - traefik.http.routers.unmanic.entrypoints=websecure
-      - traefik.http.services.unmanic.loadbalancer.server.port=8888
-      - homepage.group=Media
-      - homepage.name=Unmanic
-      - homepage.icon=unmanic
-      - homepage.href=${URL_SCHEME}://${UNMANIC_SUB_DOMAIN}.${SERVER_DOMAIN}
-      - homepage.description=Library transcoding
-    security_opt:
-      - no-new-privileges:true
-
   autoheal:
     image: willfarrell/autoheal:latest
     container_name: autoheal

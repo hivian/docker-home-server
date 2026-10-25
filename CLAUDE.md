@@ -55,7 +55,7 @@ Each subdirectory is an independent stack:
 | Directory | Services |
 |-----------|----------|
 | `traefik/` | Traefik reverse proxy + whoami |
-| `media-server/` | Gluetun (VPN) + qBittorrent + Jackett + Jellyfin + Unmanic |
+| `media-server/` | Gluetun (VPN) + qBittorrent + Jackett + Jellyfin |
 | `pihole/` | Pi-hole + Unbound |
 | `monitoring/` | Prometheus + Grafana + cAdvisor + Node Exporter + Alertmanager |
 | `homepage/` | Homepage dashboard |
