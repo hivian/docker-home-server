@@ -9,9 +9,10 @@ services:
       - 8083:80/tcp
     environment:
       TZ: ${TZ}
-      WEBPASSWORD: ${PASSWORD}
-      VIRTUAL_HOST: ${VIRTUAL_HOST}
-      PIHOLE_DNS_: 172.18.0.21#5053
+      FTLCONF_webserver_api_password: ${PASSWORD}
+      FTLCONF_dns_upstreams: 172.18.0.21#5053
+      # Bridge network: LAN queries arrive from non-local subnets, v6 default (local) would refuse them
+      FTLCONF_dns_listeningMode: all
     volumes:
       - ${VOLUME_PATH}/etc-pihole:/etc/pihole
       - ${VOLUME_PATH}/etc-dnsmasq.d:/etc/dnsmasq.d
@@ -26,9 +27,10 @@ services:
       - traefik.http.routers.pihole.rule=Host(`${SUB_DOMAIN}.${SERVER_DOMAIN}`)
       - traefik.http.routers.pihole.entrypoints=websecure
       - traefik.http.services.pihole.loadbalancer.server.port=80
-      - traefik.http.routers.pihole.middlewares=strip-prefix,add-prefix
-      - traefik.http.middlewares.strip-prefix.stripprefix.prefixes=/admin
-      - traefik.http.middlewares.add-prefix.addprefix.prefix=/admin
+      # v6 serves the UI at /admin but the API at /api, so only redirect the bare root
+      - traefik.http.routers.pihole.middlewares=pihole-root
+      - traefik.http.middlewares.pihole-root.redirectregex.regex=^https?://([^/]+)/?$$
+      - traefik.http.middlewares.pihole-root.redirectregex.replacement=https://$${1}/admin/
       - homepage.group=Infrastructure
       - homepage.name=Pihole
       - homepage.icon=pi-hole
@@ -36,6 +38,7 @@ services:
       - homepage.description=DNS server
       - homepage.widget.type=pihole
       - homepage.widget.url=${URL_SCHEME}://${SUB_DOMAIN}.${SERVER_DOMAIN}
+      - homepage.widget.version=6
       - homepage.widget.key=${API_KEY}
       - homepage.widget.fields=["queries", "blocked", "blocked_percent", "gravity"]
 
