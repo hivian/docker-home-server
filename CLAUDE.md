@@ -62,6 +62,8 @@ Each subdirectory is an independent stack:
 | `nextcloud/` | Nextcloud |
 | `portainer/` | Portainer |
 | `homeassistant/` | Home Assistant |
+| `hermes-agent/` | Hermes AI agent + filtered Docker socket proxy; webhook routes on `127.0.0.1:8644` (flight-desk alerts, Scrutiny) |
+| `ib-gateway/` | IB Gateway + IBC, IBKR paper account, API on `127.0.0.1:4002` only, for the flight-desk engine. Healthy = connected to the IBKR servers; `autoheal=true` restarts it otherwise |
 
 ### Environment Variable Layering
 - Root `.env` defines global vars: `PUID`, `PGID`, `TZ`, `VOLUMES_ROOT_PATH`, `SERVER_DOMAIN`, `SERVER_IP`, `URL_SCHEME`, `ACTIVE_SERVICES`, `RESTART_SERVICES`

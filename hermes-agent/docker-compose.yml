@@ -19,6 +19,9 @@ services:
       DOCKER_HOST: tcp://hermes-dockerproxy:2375
     volumes:
       - ${VOLUME_PATH}/data:/opt/data
+    # Webhook routes (HMAC-signed) for the flight-desk engine, which runs on the host. Loopback only, never via Traefik.
+    ports:
+      - "127.0.0.1:8644:8644"
     networks:
       - traefik-network
       - hermes-docker

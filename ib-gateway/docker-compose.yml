@@ -1,0 +1,47 @@
+services:
+  ib-gateway:
+    image: ghcr.io/gnzsnz/ib-gateway:stable
+    container_name: ib-gateway
+    restart: unless-stopped
+    environment:
+      TWS_USERID: ${TWS_USERID:?TWS_USERID manquant dans ib-gateway/.env}
+      TWS_PASSWORD_FILE: /run/secrets/tws_password
+      TRADING_MODE: paper
+      READ_ONLY_API: "no"
+      # No display is attached: an unanswered "accept incoming connection" dialog would block every API client
+      TWS_ACCEPT_INCOMING: accept
+      # Same reason for the API order precaution dialogs; the flight-desk engine runs its own pre-trade checks
+      BYPASS_WARNING: "yes"
+      TWOFA_TIMEOUT_ACTION: restart
+      RELOGIN_AFTER_TWOFA_TIMEOUT: "yes"
+      # IBKR forces a daily restart; schedule it before the European open
+      AUTO_RESTART_TIME: ${AUTO_RESTART_TIME:-06:30 AM}
+      TIME_ZONE: ${TZ:-Europe/Paris}
+      TZ: ${TZ:-Europe/Paris}
+      JAVA_HEAP_SIZE: ${JAVA_HEAP_SIZE:-768}
+    secrets:
+      - tws_password
+    # Paper API only, on the host loopback: the flight-desk engine is the only client.
+    # Never route through Traefik, never add to the Hermes allowlist. oanda-bot-python binds the same port.
+    ports:
+      - "127.0.0.1:4002:4004"
+    # Healthy = logged in, i.e. connected to the IBKR servers (ports 4000/4001, hex 0FA0/0FA1, state 01 = established).
+    # A gateway that loses them can keep its API port open and answer nothing, as after a failed daily restart.
+    healthcheck:
+      test: ["CMD", "grep", "-qsE", ":0FA[01] 01 ", "/proc/net/tcp", "/proc/net/tcp6"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    labels:
+      - autoheal=true
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+    security_opt:
+      - no-new-privileges:true
+
+secrets:
+  tws_password:
+    file: ./secrets/tws_password
