@@ -42,6 +42,46 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  # The live account. It keeps no credentials: the trader logs in from its window, shown in Flight Desk's Réglages
+  # through VNC, and confirms on IBKR Mobile. Kept apart from the paper gateway so that its window is the only one there.
+  ib-gateway-live:
+    image: ghcr.io/gnzsnz/ib-gateway:stable
+    container_name: ib-gateway-live
+    restart: unless-stopped
+    environment:
+      TWS_USERID: ""
+      TRADING_MODE: live
+      VNC_SERVER_PASSWORD_FILE: /run/secrets/vnc_password
+      READ_ONLY_API: "no"
+      # No display is attached: an unanswered "accept incoming connection" dialog would block every API client
+      TWS_ACCEPT_INCOMING: accept
+      # Same reason for the API order precaution dialogs; the flight-desk engine runs its own pre-trade checks
+      BYPASS_WARNING: "yes"
+      TWOFA_TIMEOUT_ACTION: restart
+      RELOGIN_AFTER_TWOFA_TIMEOUT: "yes"
+      # IBKR forces a daily restart; schedule it before the European open
+      AUTO_RESTART_TIME: ${AUTO_RESTART_TIME:-06:30 AM}
+      TIME_ZONE: ${TZ:-Europe/Paris}
+      TZ: ${TZ:-Europe/Paris}
+      JAVA_HEAP_SIZE: ${JAVA_HEAP_SIZE:-768}
+    secrets:
+      - vnc_password
+    # On the host loopback only: the flight-desk engine is the only client of the API, and relays the window behind its
+    # own session. Never route through Traefik, never add to the Hermes allowlist.
+    ports:
+      - "127.0.0.1:4001:4003" # live API
+      - "127.0.0.1:5900:5900" # IB Gateway window (VNC)
+    # No healthcheck nor autoheal: logged out is its normal state until the trader logs in, and a restart would log
+    # the live account out, to be logged in again by hand.
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+    security_opt:
+      - no-new-privileges:true
+
 secrets:
   tws_password:
     file: ./secrets/tws_password
+  vnc_password:
+    file: ./secrets/vnc_password

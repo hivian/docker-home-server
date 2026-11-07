@@ -63,7 +63,7 @@ Each subdirectory is an independent stack:
 | `portainer/` | Portainer |
 | `homeassistant/` | Home Assistant |
 | `hermes-agent/` | Hermes AI agent + filtered Docker socket proxy; webhook routes on `127.0.0.1:8644` (flight-desk alerts and trade reviews, Scrutiny); MCP client of the flight-desk engine at `172.18.0.1:8652` (read-only desk tools plus verdicts and notes, no orders) |
-| `ib-gateway/` | IB Gateway + IBC, IBKR paper account, API on `127.0.0.1:4002` only, for the flight-desk engine. Healthy = connected to the IBKR servers; `autoheal=true` restarts it otherwise |
+| `ib-gateway/` | Two IB Gateway + IBC containers for the flight-desk engine, loopback only. `ib-gateway`: paper account, API `127.0.0.1:4002`, auto login; healthy = connected to the IBKR servers, `autoheal=true` restarts it otherwise. `ib-gateway-live`: live account, API `127.0.0.1:4001`, no stored credentials, logged in by hand from its VNC window (`127.0.0.1:5900`, password in `secrets/vnc_password`) relayed by the flight-desk engine; no healthcheck nor autoheal, a restart logs it out |
 
 ### Environment Variable Layering
 - Root `.env` defines global vars: `PUID`, `PGID`, `TZ`, `VOLUMES_ROOT_PATH`, `SERVER_DOMAIN`, `SERVER_IP`, `URL_SCHEME`, `ACTIVE_SERVICES`, `RESTART_SERVICES`
