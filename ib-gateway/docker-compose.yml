@@ -66,6 +66,12 @@ services:
       JAVA_HEAP_SIZE: ${JAVA_HEAP_SIZE:-768}
     secrets:
       - vnc_password
+    # x11vnc reads its options from ~/.x11vncrc: a Caps Lock from the browser (a Mac sends one when it switches input
+    # language) would lock the gateway's capitals unseen and spoil the password typed next.
+    configs:
+      - source: x11vncrc
+        target: /home/ibgateway/.x11vncrc
+        mode: 0444
     # On the host loopback only: the flight-desk engine is the only client of the API, and relays the window behind its
     # own session. Never route through Traefik, never add to the Hermes allowlist.
     ports:
@@ -85,3 +91,8 @@ secrets:
     file: ./secrets/tws_password
   vnc_password:
     file: ./secrets/vnc_password
+
+configs:
+  x11vncrc:
+    content: |
+      skip_lockkeys
