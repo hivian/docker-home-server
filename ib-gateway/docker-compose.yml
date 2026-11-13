@@ -20,8 +20,9 @@ x-gateway-env: &gateway-env
   BYPASS_WARNING: "yes"
   TWOFA_TIMEOUT_ACTION: restart
   RELOGIN_AFTER_TWOFA_TIMEOUT: "yes"
-  # IBKR forces a daily restart; schedule it before the European open
-  AUTO_RESTART_TIME: ${AUTO_RESTART_TIME:-06:30 AM}
+  # IBKR forces a daily restart; scheduled before the European open but after IBKR's own daily reset of its European
+  # servers (06:25-07:45 CET): a restart during it cannot authenticate and leaves the gateway stuck ("Restart in progress")
+  AUTO_RESTART_TIME: ${AUTO_RESTART_TIME:-08:00 AM}
   TIME_ZONE: ${TZ:-Europe/Paris}
   TZ: ${TZ:-Europe/Paris}
   JAVA_HEAP_SIZE: ${JAVA_HEAP_SIZE:-768}
