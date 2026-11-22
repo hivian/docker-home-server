@@ -62,7 +62,7 @@ Each subdirectory is an independent stack:
 | `nextcloud/` | Nextcloud |
 | `portainer/` | Portainer |
 | `homeassistant/` | Home Assistant |
-| `hermes-agent/` | Hermes AI agent + filtered Docker socket proxy; webhook routes on `127.0.0.1:8644` (flight-desk alerts, trade reviews and chart analyses, Scrutiny); MCP client of the flight-desk engine at `172.18.0.1:8652` (read-only desk tools plus verdicts, notes and chart analyses with their drawings, no orders) |
+| `hermes-agent/` | Gone: the Hermes stack moved to the flight-desk project on 22 Nov 2026 (`~/Documents/flight-desk/hermes/`, container `flight-desk-hermes`, webhooks on `127.0.0.1:8645`, MCP client of the engine on `172.30.0.1:8652`). It serves Flight Desk only and sends the daily « Principe du matin »; the home-server assistant (Docker proxy, Scrutiny route, Pi-hole, Jellyfin) is retired, Scrutiny's notification removed |
 | `ib-gateway/` | Gone: the two IB Gateway + IBC containers (`ib-gateway`, `ib-gateway-live`, loopback only) live in the flight-desk project since 14 Nov 2026, `~/Documents/flight-desk/gateway/` (`npm run gateway` there), same container names and ports; the engine restarts the live one when its daily restart hangs |
 
 ### Environment Variable Layering
